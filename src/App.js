@@ -2,6 +2,9 @@ import styled, { keyframes } from "styled-components";
 
 const Father = styled.div`
   display: flex;
+  justify-content: center;
+  align-items: center;
+  height: 100vh;
 `;
 const rotationAnimation = keyframes`
   0% {
@@ -14,6 +17,9 @@ const rotationAnimation = keyframes`
     transform: rotate(360deg);
   }
 `;
+const Emoji = styled.span`
+  font-size: 35px;
+`;
 const Box = styled.div`
   width: 100px;
   height: 100px;
@@ -22,14 +28,8 @@ const Box = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  span {
-    font-size: 35px;
-    &:hover {
-      font-size: 50px;
-    }
-    &:active {
-      opacity: 0;
-    }
+  ${Emoji}:hover {
+    font-size: 50px;
   }
 `;
 
@@ -37,8 +37,9 @@ function App() {
   return (
     <Father as="header">
       <Box>
-        <span>🤸‍♀️</span>
+        <Emoji>🤸‍♀️</Emoji>
       </Box>
+      <Emoji>💙</Emoji>
     </Father>
   );
 }
