@@ -18,6 +18,7 @@ const Header = styled.header`
   justify-content: center;
   align-items: center;
   margin: 10px 0;
+  font-weight: bold;
 `;
 const CoinList = styled.ul``;
 const Coin = styled.li`
