@@ -59,7 +59,11 @@ interface ICoin {
 }
 
 function Coins() {
-  const { isLoading, data } = useQuery<ICoin[]>(["allCoins"], fetchCoins);
+  const { isLoading, data } = useQuery({
+    queryKey: ["allCoins"],
+    queryFn: fetchCoins,
+    select: (data) => data.slice(0, 100),
+  });
   return (
     <Container>
       <Header>
