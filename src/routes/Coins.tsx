@@ -2,6 +2,7 @@ import styled from "styled-components";
 import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchCoins } from "../api";
+import { Helmet } from "react-helmet";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
@@ -57,6 +58,9 @@ function Coins() {
   });
   return (
     <Container>
+      <Helmet>
+        <title>CRYPTO TRACKER</title>
+      </Helmet>
       <Header>
         <Title>Coins</Title>
       </Header>
