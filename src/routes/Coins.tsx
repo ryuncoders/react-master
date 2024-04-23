@@ -3,10 +3,14 @@ import { Link } from "react-router-dom";
 import { useQuery } from "react-query";
 import { fetchCoins } from "../api";
 import { Helmet } from "react-helmet";
+import { useSetRecoilState } from "recoil";
+import { isDarkAtom } from "../atoms";
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faSun } from "@fortawesome/free-solid-svg-icons";
 
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
-  font-size: 35px;
+  font-size: 60px;
 `;
 
 const Container = styled.div`
@@ -24,8 +28,8 @@ const Header = styled.header`
 `;
 const CoinList = styled.ul``;
 const Coin = styled.li`
-  background-color: white;
-  color: ${(props) => props.theme.bgColor};
+  background-color: ${(props) => props.theme.coinsBgColor};
+  color: ${(props) => props.theme.textColor};
   border-radius: 15px;
   margin-bottom: 10px;
   a {
@@ -50,7 +54,25 @@ const Img = styled.img`
   margin-right: 10px;
 `;
 
+const ThemeBtn = styled.button`
+  border-radius: 50%;
+  border: none;
+  background-color: whitesmoke;
+  padding: 5px;
+  position: fixed;
+  bottom: 35px;
+  right: 35px;
+  height: 50px;
+  width: 50px;
+  transition: all 0.1s ease-in;
+  &:hover {
+    background-color: ${(props) => props.theme.accentColor};
+  }
+`;
+
 function Coins() {
+  const setDarkAtom = useSetRecoilState(isDarkAtom);
+  const toggleDarkAtom = () => setDarkAtom((prev) => !prev);
   const { isLoading, data } = useQuery({
     queryKey: ["allCoins"],
     queryFn: fetchCoins,
@@ -61,6 +83,9 @@ function Coins() {
       <Helmet>
         <title>CRYPTO TRACKER</title>
       </Helmet>
+      <ThemeBtn onClick={toggleDarkAtom}>
+        <FontAwesomeIcon icon={faSun} />
+      </ThemeBtn>
       <Header>
         <Title>Coins</Title>
       </Header>

@@ -23,7 +23,7 @@ const Header = styled.header`
 `;
 const Title = styled.h1`
   color: ${(props) => props.theme.accentColor};
-  font-size: 35px;
+  font-size: 60px;
 `;
 
 const Container = styled.div`
@@ -38,7 +38,7 @@ const Loader = styled.span`
 const Overview = styled.div`
   display: flex;
   justify-content: space-between;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.coinsBgColor};
   padding: 15px 20px;
   border-radius: 10px;
 `;
@@ -69,7 +69,7 @@ const Tab = styled.span<{ isActive: boolean }>`
   text-transform: uppercase;
   font-size: 12px;
   font-weight: 500;
-  background-color: rgba(0, 0, 0, 0.5);
+  background-color: ${(props) => props.theme.coinsBgColor};
   padding: 8px 0px;
   border-radius: 10px;
   color: ${(props) =>
@@ -77,6 +77,18 @@ const Tab = styled.span<{ isActive: boolean }>`
   a {
     display: block;
   }
+`;
+
+const Button = styled.button`
+  background-color: inherit;
+  color: ${(props) => props.theme.textColor};
+  justify-self: first baseline;
+  border: none;
+  font-size: 30px;
+  font-weight: 700;
+  position: fixed;
+  top: 25px;
+  left: 35px;
 `;
 
 interface RouteParams {
@@ -153,7 +165,10 @@ function Coin() {
   );
   const { isLoading: tickersLoading, data: tickersData } = useQuery<ITrackers>(
     ["tickers", coinId],
-    () => fetchCoinTickers(coinId)
+    () => fetchCoinTickers(coinId),
+    {
+      refetchInterval: 5000,
+    }
   );
 
   const loading = infoLoading || tickersLoading;
@@ -164,6 +179,9 @@ function Coin() {
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </title>
       </Helmet>
+      <Link to={"/"}>
+        <Button>&larr;</Button>
+      </Link>
       <Header>
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
@@ -183,7 +201,7 @@ function Coin() {
               <span>{infoData?.symbol}</span>
             </OverviewItem>
             <OverviewItem>
-              <span>opensource</span>
+              <span>Price</span>
               <span>{tickersData?.quotes.USD.price.toFixed(3)}</span>
             </OverviewItem>
           </Overview>
