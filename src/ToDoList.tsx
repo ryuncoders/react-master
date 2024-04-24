@@ -1,5 +1,4 @@
 import { useForm } from "react-hook-form";
-import { DefaultValue } from "recoil";
 
 interface IForm {
   email: string;
@@ -12,13 +11,24 @@ function ToDoList() {
   const {
     register,
     handleSubmit,
+    setError,
     formState: { errors },
   } = useForm<IForm>({
     defaultValues: {
       email: "@naver.com",
     },
   });
-  const onValid = (data: IForm) => {};
+  const onValid = (data: IForm) => {
+    if (data.password !== data.password1) {
+      setError(
+        "password1",
+        {
+          message: "Password are not the same.",
+        },
+        { shouldFocus: true }
+      );
+    }
+  };
   console.log(errors);
   return (
     <div>
