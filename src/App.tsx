@@ -1,32 +1,32 @@
-import { Reset } from "styled-reset";
-import { createGlobalStyle } from "styled-components";
-import ToDoList from "./components/ToDoList";
-
-const GlobalStyle = createGlobalStyle`
-@import url('https://fonts.googleapis.com/css2?family=Source+Sans+Pro:wght@300;400&display=swap');
-
-  body {
-    background-color: ${(props) => props.theme.bgColor};
-    color: ${(props) => props.theme.textColor};
-    font-family: 'Source Sans Pro', sans-serif;
-    font-weight: 400;
-    font-style: normal;
-    box-sizing: border-box;
-  }
-  a {
-    text-decoration: none;
-    color: inherit;
-  }
-`;
+import { useRecoilState, useRecoilValue } from "recoil";
+import { hoursSelector, minutesState } from "./atoms";
+import React from "react";
 
 function App() {
+  const [minutes, setMinutes] = useRecoilState(minutesState);
+  const [hours, setHours] = useRecoilState(hoursSelector);
+  const onMinutesChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setMinutes(+event.currentTarget.value);
+  };
+  const onHoursChange = (event: React.FormEvent<HTMLInputElement>) => {
+    setHours(+event.currentTarget.value);
+  };
   return (
-    <>
-      <Reset />
-      <GlobalStyle />
-      <ToDoList />
-    </>
+    <div>
+      <input
+        value={minutes}
+        onChange={onMinutesChange}
+        type="number"
+        placeholder="Minutes"
+      />
+      <input
+        value={hours}
+        onChange={onHoursChange}
+        type="number"
+        placeholder="Hours"
+      />
+    </div>
   );
-  //React.Fragment
 }
+
 export default App;
