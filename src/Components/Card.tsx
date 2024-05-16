@@ -12,14 +12,15 @@ const Wrapper = styled.div<{ isDragging: boolean }>`
     props.isDragging ? "0px 2px 5px rgba(0, 0, 0, 0.05)" : "none"};
 `;
 
-interface IDroggableCard {
-  toDo: string;
+interface ICard {
+  toDoId: number;
+  toDoText: string;
   index: number;
 }
 
-function Card({ toDo, index }: IDroggableCard) {
+function Card({ toDoId, toDoText, index }: ICard) {
   return (
-    <Draggable key={toDo} draggableId={toDo} index={index}>
+    <Draggable key={toDoId} draggableId={toDoText} index={index}>
       {(magic, snapshot) => (
         <Wrapper
           isDragging={snapshot.isDragging}
@@ -27,7 +28,7 @@ function Card({ toDo, index }: IDroggableCard) {
           {...magic.dragHandleProps}
           {...magic.draggableProps}
         >
-          {toDo}
+          {toDoText}
         </Wrapper>
       )}
     </Draggable>
