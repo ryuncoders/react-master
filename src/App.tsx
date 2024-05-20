@@ -3,83 +3,79 @@ import styled from "styled-components";
 import { AnimatePresence, motion } from "framer-motion";
 
 const Wrapper = styled.div`
+  background-color: rgb(15, 15, 15);
   height: 100vh;
-  width: 100vw;
-  background-color: rgb(181, 11, 255);
   display: flex;
-  justify-content: center;
   align-items: center;
-  flex-direction: column;
-  &:hover {
-    span {
-      opacity: 1;
-    }
-  }
+  justify-content: center;
 `;
-
-const Span = styled(motion.span)`
-  color: rgb(255, 255, 255);
-  opacity: 0.6;
-  font-weight: 700;
-  font-size: 18px;
-  margin-top: 20px;
-  transition: opacity 0.3s ease;
-`;
-
-const Grid = styled.div`
-  display: grid;
-  grid-template-columns: repeat(3, 200px);
-  grid-template-rows: repeat(2, 200px);
-  gap: 15px;
-  div:first-child,
-  div:last-child {
-    grid-column: span 2;
-  }
-`;
-
 const Box = styled(motion.div)`
-  background-color: rgb(255, 255, 255);
-  box-shadow: rgba(0, 0, 0, 0.35) 0px 5px 15px;
-  border-radius: 25px;
-`;
-
-const Overlay = styled(motion.div)`
-  width: 100%;
-  height: 100%;
-  position: absolute;
-  background-color: rgb(0, 0, 0);
+  height: 100px;
+  width: 100px;
+  border-radius: 10px;
+  background-color: whitesmoke;
   display: flex;
   justify-content: center;
   align-items: center;
+  position: absolute;
+  top: 100px;
 `;
+const Button = styled.button``;
+
+const box = {
+  entry: (back: boolean) => ({
+    x: back ? 500 : -500,
+    opacity: 0,
+    scale: 0,
+  }),
+  center: {
+    x: 0,
+    opacity: 1,
+    scale: 1,
+    transition: {
+      duration: 1,
+    },
+  },
+  exit: (back: boolean) => ({
+    x: back ? -500 : 500,
+    opacity: 0,
+    scale: 0,
+    transition: { duration: 1 },
+  }),
+};
 
 function App() {
-  const [boxId, setBoxId] = useState<null | string>(null);
+  const [visible, setVisible] = useState(1);
+  const [back, setBack] = useState(false);
+  const nextPlease = () => {
+    setBack(true);
+    setVisible((prev) => (prev === 10 ? 10 : prev + 1));
+  };
+  const prevPlease = () => {
+    setBack(false);
+    setVisible((prev) => (prev === 1 ? 1 : prev - 1));
+  };
   return (
     <Wrapper>
-      <Grid>
-        {["1", "2", "3", "4"].map((n) => (
-          <Box onClick={() => setBoxId(n)} key={n} layoutId={n} />
-        ))}
-      </Grid>
-      <AnimatePresence>
-        {boxId ? (
-          <Overlay
-            onClick={() => setBoxId(null)}
-            initial={{ backgroundColor: "rgba(181, 11, 255, 0)" }}
-            animate={{ backgroundColor: "rgb(181, 11, 255, 0.8)" }}
-            exit={{ backgroundColor: "rgb(181, 11, 255, 0)" }}
-          >
+      <AnimatePresence custom={back}>
+        {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((i) =>
+          i === visible ? (
             <Box
-              layoutId={boxId}
-              style={{ width: "500px", height: "300px" }}
-            ></Box>
-          </Overlay>
-        ) : null}
+              custom={back}
+              variants={box}
+              initial="entry"
+              animate="center"
+              exit="exit"
+              key={i}
+            >
+              {i}
+            </Box>
+          ) : null
+        )}
       </AnimatePresence>
-      <Span>Tap to open a card.</Span>
+      <Button onClick={prevPlease}>{"<"}</Button>
+      <Button onClick={nextPlease}>{">"}</Button>
     </Wrapper>
   );
 }
-
 export default App;
