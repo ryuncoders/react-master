@@ -25,3 +25,17 @@ export function getMovies() {
     (res) => res.json()
   );
 }
+
+const options = {
+  method: "GET",
+  headers: {
+    accept: "application/json",
+    Authorization:
+      "Bearer eyJhbGciOiJIUzI1NiJ9.eyJhdWQiOiJlMzhiMDU4MDU3NGZkZTBlNGM3YTBkYzA4NDUwMzdjNSIsInN1YiI6IjY2NGQ3YjI5ZTliZDNlZDVlOGNkZmE5OSIsInNjb3BlcyI6WyJhcGlfcmVhZCJdLCJ2ZXJzaW9uIjoxfQ.ArB3FNv-dZVllD7r9AKOBn-x11Q1qbVInddHGjTsKTk",
+  },
+};
+
+fetch("https://api.themoviedb.org/3/search/multi?query=dune", options)
+  .then((response) => response.json())
+  .then((response) => console.log(response))
+  .catch((err) => console.error(err));

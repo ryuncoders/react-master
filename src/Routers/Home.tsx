@@ -3,7 +3,14 @@ import styled from "styled-components";
 import { useQuery } from "react-query";
 import { IGetMoviesResult, getMovies } from "../api";
 import { makeImagePath } from "../utils";
-import { AnimatePresence, motion } from "framer-motion";
+import {
+  AnimatePresence,
+  motion,
+  useAnimate,
+  useAnimation,
+  useScroll,
+} from "framer-motion";
+import { useHistory, useRouteMatch } from "react-router-dom";
 
 const Wrapper = styled.div`
   height: 300vh;
@@ -44,20 +51,52 @@ const Slider = styled.div`
 const Page = styled(motion.div)`
   position: absolute;
   width: 100%;
-  overflow: hidden;
+
   display: grid;
   grid-template-columns: repeat(6, 1fr);
-  overflow: hidden;
+
   height: 10vw;
   gap: 10px;
 `;
-const Box = styled.div<{ bgPhoto: string }>`
+const Box = styled(motion.div)<{ bgPhoto: string }>`
   background-color: white;
   color: black;
   font-size: 40px;
   background-image: url(${(props) => props.bgPhoto});
   background-position: center center;
   background-size: cover;
+  &:first-child {
+    transform-origin: center left;
+  }
+  &:last-child {
+    transform-origin: center right;
+  }
+`;
+
+const Info = styled(motion.div)`
+  box-sizing: border-box;
+  width: 100%;
+  height: 30%;
+  background-color: black;
+  position: absolute;
+  bottom: 0;
+  opacity: 0;
+  padding: 10px;
+  h4 {
+    color: white;
+    font-size: 22px;
+  }
+`;
+
+const InfoMovie = styled(motion.div)`
+  position: absolute;
+  width: 40vw;
+  height: 180vh;
+  left: 0;
+  right: 0;
+  margin: 0 auto;
+  background-color: white;
+  overflow: scroll;
 `;
 
 const pageVariants = {
@@ -66,7 +105,46 @@ const pageVariants = {
   exit: { x: -window.innerWidth },
 };
 
+const boxVariants = {
+  normal: {
+    scale: 1,
+  },
+  hover: {
+    scale: 1.3,
+    y: -80,
+    transition: {
+      delay: 0.5,
+      duration: 0.1,
+      type: "tween",
+    },
+  },
+};
+
+const InfoVariants = {
+  hover: {
+    opacity: 0.3,
+    transition: {
+      delay: 0.5,
+      duration: 0.1,
+      type: "tween",
+    },
+  },
+};
+
+const Overlay = styled(motion.div)`
+  position: fixed;
+  top: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  opacity: 0;
+`;
+
 function Home() {
+  const history = useHistory();
+  const bigMovieMatch = useRouteMatch<{ movieId: string }>("/movies/:movieId");
+  console.log(bigMovieMatch);
+
   const { data, isLoading } = useQuery<IGetMoviesResult>(
     ["movies", "nowPlaying"],
     getMovies
@@ -86,6 +164,18 @@ function Home() {
     }
   };
   const toggleLeaving = () => setLeaving((prev) => !prev);
+
+  const onBoxClicked = (movieId: number) => {
+    history.push(`movies/${movieId}`);
+  };
+  const onOverlayClick = () => history.push("/");
+
+  const clickedMovie =
+    bigMovieMatch?.params.movieId &&
+    data?.results.find((movie) => movie.id === +bigMovieMatch.params.movieId);
+
+  const { scrollY } = useScroll();
+
   return (
     <Wrapper>
       {isLoading ? (
@@ -114,15 +204,39 @@ function Home() {
                   .slice(index * offset, index * offset + offset)
                   .map((movie) => (
                     <Box
+                      variants={boxVariants}
+                      initial="normal"
+                      whileHover="hover"
+                      transition={{ type: "tween" }}
                       bgPhoto={makeImagePath(movie.backdrop_path)}
                       key={movie.id}
+                      layoutId={String(movie.id)}
+                      onClick={() => onBoxClicked(movie.id)}
                     >
-                      {}
+                      <Info variants={InfoVariants}>
+                        <h4>{movie.original_title}</h4>
+                      </Info>
                     </Box>
                   ))}
               </Page>
             </AnimatePresence>
           </Slider>
+          <AnimatePresence>
+            {clickedMovie && (
+              <>
+                <Overlay
+                  onClick={onOverlayClick}
+                  exit={{ opacity: 0 }}
+                  animate={{ opacity: 1 }}
+                />
+                <InfoMovie
+                  style={{ top: scrollY.get() + 100 }}
+                  layoutId={bigMovieMatch.params.movieId}
+                />
+              </>
+            )}
+            <></>
+          </AnimatePresence>
         </>
       )}
     </Wrapper>
