@@ -1,7 +1,8 @@
 import React, { useEffect, useState } from "react";
-import { Link, useRouteMatch } from "react-router-dom";
+import { Link, useHistory, useRouteMatch } from "react-router-dom";
 import styled from "styled-components";
 import { motion, useAnimation, useScroll } from "framer-motion";
+import { useForm } from "react-hook-form";
 
 const Nav = styled(motion.nav)`
   background-color: black;
@@ -35,7 +36,7 @@ const Item = styled.li`
   }
   position: relative;
 `;
-const Search = styled.span`
+const Search = styled.form`
   color: ${(props) => props.theme.white.darker};
   display: flex;
   align-items: center;
@@ -115,6 +116,15 @@ function Header() {
     });
   }, [scrollY, navAnimation]);
 
+  interface IForm {
+    keyword: string;
+  }
+  const history = useHistory();
+  const { register, handleSubmit } = useForm<IForm>();
+  const onValid = (data: IForm) => {
+    history.push(`search?keyword=${data.keyword}`);
+  };
+
   return (
     <Nav variants={navVariants} animate={navAnimation} initial={"top"}>
       <Col>
@@ -140,7 +150,7 @@ function Header() {
         </Items>
       </Col>
       <Col>
-        <Search>
+        <Search onSubmit={handleSubmit(onValid)}>
           <motion.svg
             onClick={toggleSearch}
             animate={{ x: searchOpen ? -200 : 0 }}
@@ -155,7 +165,9 @@ function Header() {
               clipRule="evenodd"
             ></path>
           </motion.svg>
+
           <Input
+            {...register("keyword")}
             type="text"
             animate={inputAnimation}
             initial={{ scaleX: 0 }}
